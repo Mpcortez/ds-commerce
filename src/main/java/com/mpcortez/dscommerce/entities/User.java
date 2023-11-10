@@ -6,7 +6,9 @@ import lombok.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -35,4 +37,12 @@ public class User implements Serializable {
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "client")
     private List<Order> orders = new ArrayList<>();
+
+    @ManyToMany
+    @ToString.Exclude
+    @Setter(AccessLevel.NONE)
+    @JoinTable(name = "tb_user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 }
