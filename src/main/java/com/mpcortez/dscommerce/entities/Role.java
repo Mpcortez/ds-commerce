@@ -1,24 +1,30 @@
 package com.mpcortez.dscommerce.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
 
-@Data
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_role")
 @EqualsAndHashCode(of = "authority")
-public class Role implements Serializable {
+public class Role implements GrantedAuthority, Serializable {
 
     @Id
+    @Getter
+    @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     private String authority;
+
+    @Override
+    public String getAuthority() {
+        return authority;
+    }
 }
