@@ -61,12 +61,10 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 		try {
 			user = userDetailsService.loadUserByUsername(username);
 		} catch (UsernameNotFoundException e) {
-			throw new OAuth2AuthenticationException("Invalid credentials");
+			throw new OAuth2AuthenticationException("Usuário " + username + " não encontrado.");
 		}
-				
-		if (!passwordEncoder.matches(password, user.getPassword()) || !user.getUsername().equals(username)) {
-			throw new OAuth2AuthenticationException("Invalid credentials");
-		}
+
+		checkCredentials(username, password, user);
 
 		Set<String> authorizedScopes = user.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
@@ -120,6 +118,12 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 		this.authorizationService.save(authorization);
 		
 		return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken);
+	}
+
+	private void checkCredentials(String username, String password, UserDetails user) {
+		if (!user.getUsername().equals(username)) throw new OAuth2AuthenticationException("Nome de usuário incorreto.");
+
+		if (!passwordEncoder.matches(password, user.getPassword())) throw new OAuth2AuthenticationException("Senha incorreta.");
 	}
 
 	@Override
