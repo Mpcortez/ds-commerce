@@ -6,10 +6,13 @@ import com.mpcortez.dscommerce.services.ProductService;
 import com.mpcortez.dscommerce.services.exception.DatabaseException;
 import com.mpcortez.dscommerce.services.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -17,11 +20,12 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
 
-    private static final String PRODUCT_NOT_FOUND_MSG = "Produto não encontrado: id-";
+    private final MessageSource messageSource;
 
     @Override
     public Product findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_MSG + id));
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(getMessage("product.not.found", String.valueOf(id))));
     }
 
     @Override
@@ -47,11 +51,15 @@ public class ProductServiceImpl implements ProductService {
         try {
             repository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Falha de integridade referencial: id-" + id);
+            throw new DatabaseException(getMessage("product.delete.error", String.valueOf(id)));
         }
     }
 
     private void existsById(Long id) {
-        if (!repository.existsById(id)) throw new ResourceNotFoundException(PRODUCT_NOT_FOUND_MSG + id);
+        if (!repository.existsById(id)) throw new ResourceNotFoundException(getMessage("product.not.found", String.valueOf(id)));
+    }
+
+    private String getMessage(String code, String... args) {
+        return messageSource.getMessage(code, args, Locale.getDefault());
     }
 }
