@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -36,6 +37,7 @@ public class ProductController {
 
     @PostMapping()
     @ResponseStatus(CREATED)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<ProductResponseDTO> insert(@RequestBody @Valid ProductRequestDTO dto) {
         var responseDTO = ProductResponseDTOMapper.mapper(service.insert(ProductRequestDTOMapper.mapper(dto)));
         var uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
@@ -44,12 +46,14 @@ public class ProductController {
     }
 
     @PutMapping(value = "{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ProductResponseDTO update(@PathVariable Long id, @RequestBody @Valid ProductRequestDTO dto) {
         return ProductResponseDTOMapper.mapper(service.update(id, ProductRequestDTOMapper.mapper(dto)));
     }
 
-    @DeleteMapping(value = "{id}")
     @ResponseStatus(NO_CONTENT)
+    @DeleteMapping(value = "{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }
