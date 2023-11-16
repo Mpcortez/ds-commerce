@@ -9,6 +9,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -34,6 +35,12 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomAdviceError> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
         return responseEntityBuilder(getHttpStatusValue(HttpStatus.UNPROCESSABLE_ENTITY), e.getBindingResult().getFieldErrors(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<CustomAdviceError> handleMethodArgumentNotValidException(HttpServletRequest request) {
+        var errMsg = "Você não possui acesso ao recurso solicitado.";
+        return responseEntityBuilder(getHttpStatusValue(HttpStatus.FORBIDDEN), errMsg, request.getRequestURI());
     }
 
     @ExceptionHandler(Exception.class)
