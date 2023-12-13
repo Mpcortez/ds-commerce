@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
 
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -16,11 +17,9 @@ public class Role implements GrantedAuthority, Serializable {
 
     @Id
     @Getter
-    @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
     private String authority;
 
     @Override
