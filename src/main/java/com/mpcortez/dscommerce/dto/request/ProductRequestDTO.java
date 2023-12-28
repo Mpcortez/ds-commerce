@@ -1,8 +1,13 @@
 package com.mpcortez.dscommerce.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public record ProductRequestDTO(Long id,
                                 @Size(min = 3, max = 80)
@@ -12,5 +17,12 @@ public record ProductRequestDTO(Long id,
                                 String description,
                                 @Positive
                                 Double price,
-                                String imgUrl) {
+                                String imgUrl,
+                                @NotEmpty
+                                List<CategoryRequestDTO> categories) {
+
+    @Override
+    public List<CategoryRequestDTO> categories() {
+        return Objects.requireNonNullElseGet(categories, ArrayList::new);
+    }
 }

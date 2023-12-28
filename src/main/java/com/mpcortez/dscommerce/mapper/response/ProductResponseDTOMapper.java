@@ -11,7 +11,8 @@ public class ProductResponseDTOMapper {
                 product.getName(),
                 description ? product.getDescription() : "",
                 product.getPrice(),
-                product.getImgUrl()
+                product.getImgUrl(),
+                CategoryResponseDTOMapper.mapper(product.getCategories())
         );
     }
 

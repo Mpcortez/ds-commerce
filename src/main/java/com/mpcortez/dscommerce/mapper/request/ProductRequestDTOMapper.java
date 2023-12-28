@@ -12,6 +12,7 @@ public class ProductRequestDTOMapper {
                 .description(dto.description())
                 .price(dto.price())
                 .imgUrl(dto.imgUrl())
+                .categories(CategoryRequestDTOMapper.mapper(dto.categories()))
                 .build();
     }
 }
