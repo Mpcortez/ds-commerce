@@ -20,6 +20,13 @@ public class UserResponseDTOMapper {
         );
     }
 
+    public static UserResponseDTO mapperMin(User user) {
+        return new UserResponseDTO(
+                user.getId(),
+                user.getName()
+        );
+    }
+
     private static List<String> rolesMapper(Set<Role> roles) {
         return roles.stream().map(Role::getAuthority).toList();
     }

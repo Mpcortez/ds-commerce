@@ -12,4 +12,8 @@ public record UserResponseDTO(Long id,
                               String phone,
                               LocalDate birthDate,
                               List<String> roles) {
+
+    public UserResponseDTO(Long id, String name) {
+        this(id, name, null, null, null, null);
+    }
 }
