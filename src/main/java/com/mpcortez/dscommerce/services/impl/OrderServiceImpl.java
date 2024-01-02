@@ -6,10 +6,7 @@ import com.mpcortez.dscommerce.entities.Order;
 import com.mpcortez.dscommerce.mapper.request.OrderItemRequestDTOMapper;
 import com.mpcortez.dscommerce.mapper.request.OrderRequestDTOMapper;
 import com.mpcortez.dscommerce.repositories.OrderRepository;
-import com.mpcortez.dscommerce.services.OrderItemService;
-import com.mpcortez.dscommerce.services.OrderService;
-import com.mpcortez.dscommerce.services.ProductService;
-import com.mpcortez.dscommerce.services.UserService;
+import com.mpcortez.dscommerce.services.*;
 import com.mpcortez.dscommerce.services.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -24,6 +21,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository repository;
 
+    private final AuthService authService;
+
     private final UserService userService;
 
     private final OrderItemService orderItemService;
@@ -34,8 +33,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(getMessage(String.valueOf(id))));
+        var order = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(getMessage(String.valueOf(id))));
+        authService.validateSelfOrAdmin(order.getClient().getId());
+        return order;
     }
 
     @Override

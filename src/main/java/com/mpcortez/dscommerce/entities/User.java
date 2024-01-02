@@ -45,6 +45,10 @@ public class User implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    public boolean hasRole(String roleName) {
+        return roles.stream().anyMatch(role -> Objects.equals(role.getAuthority(), roleName));
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
