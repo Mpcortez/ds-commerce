@@ -14,7 +14,8 @@ public class OrderItemResponseDTOMapper {
                         item.getProduct().getId(),
                         item.getProduct().getName(),
                         item.getPrice(),
-                        item.getQuantity()
+                        item.getQuantity(),
+                        item.getProduct().getImgUrl()
                 ))
                 .toList();
     }
