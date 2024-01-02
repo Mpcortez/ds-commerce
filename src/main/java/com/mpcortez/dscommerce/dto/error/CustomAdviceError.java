@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record CustomAdviceError(Instant timestamp, Integer status, String path, String error,
@@ -20,6 +21,7 @@ public record CustomAdviceError(Instant timestamp, Integer status, String path, 
     }
 
     public void addFieldErrors(String fieldName, String errorMessage) {
+        fieldErrors.removeIf(error -> Objects.equals(error.fieldName(), fieldName));
         fieldErrors.add(new ValidationFieldError(fieldName, errorMessage));
     }
 }
