@@ -2,17 +2,15 @@ package com.mpcortez.dscommerce.services.impl;
 
 import com.mpcortez.dscommerce.entities.Product;
 import com.mpcortez.dscommerce.repositories.ProductRepository;
+import com.mpcortez.dscommerce.services.MessageService;
 import com.mpcortez.dscommerce.services.ProductService;
 import com.mpcortez.dscommerce.services.exception.DatabaseException;
 import com.mpcortez.dscommerce.services.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +18,12 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
 
-    private final MessageSource messageSource;
+    private final MessageService messageService;
 
     @Override
     public Product findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(getMessage("product.not.found", String.valueOf(id))));
+                .orElseThrow(() -> new ResourceNotFoundException(messageService.getMessage("product.not.found", String.valueOf(id))));
     }
 
     @Override
@@ -56,15 +54,11 @@ public class ProductServiceImpl implements ProductService {
         try {
             repository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException(getMessage("product.delete.error", String.valueOf(id)));
+            throw new DatabaseException(messageService.getMessage("product.delete.error", String.valueOf(id)));
         }
     }
 
     private void existsById(Long id) {
-        if (!repository.existsById(id)) throw new ResourceNotFoundException(getMessage("product.not.found", String.valueOf(id)));
-    }
-
-    private String getMessage(String code, String... args) {
-        return messageSource.getMessage(code, args, Locale.getDefault());
+        if (!repository.existsById(id)) throw new ResourceNotFoundException(messageService.getMessage("product.not.found", String.valueOf(id)));
     }
 }

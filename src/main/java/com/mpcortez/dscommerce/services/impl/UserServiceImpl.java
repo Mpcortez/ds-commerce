@@ -5,10 +5,10 @@ import com.mpcortez.dscommerce.entities.Role;
 import com.mpcortez.dscommerce.entities.User;
 import com.mpcortez.dscommerce.mapper.response.UserResponseDTOMapper;
 import com.mpcortez.dscommerce.repositories.UserRepository;
+import com.mpcortez.dscommerce.services.MessageService;
 import com.mpcortez.dscommerce.services.UserService;
 import com.mpcortez.dscommerce.services.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +17,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
 
-    private final MessageSource messageSource;
+    private final MessageService messageService;
 
     @Override
     public UserResponseDTO logged() {
@@ -49,7 +48,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     protected User findByEmail(String email) {
         return repository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new UsernameNotFoundException(getMessage(email)));
+                .orElseThrow(() -> new UsernameNotFoundException(messageService.getMessage("user.not.found", email)));
     }
 
     protected Set<Role> getAuthorities(User user) {
@@ -72,11 +71,7 @@ public class UserServiceImpl implements UserService {
 
             return findByEmail(username);
         } catch (Exception e) {
-            throw new ResourceNotFoundException(getMessage(username));
+            throw new ResourceNotFoundException(messageService.getMessage("user.not.found", username));
         }
-    }
-
-    private String getMessage(String... args) {
-        return messageSource.getMessage("user.not.found", args, Locale.getDefault());
     }
 }

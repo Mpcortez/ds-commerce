@@ -1,9 +1,11 @@
 package com.mpcortez.dscommerce.controllers.handlers;
 
 import com.mpcortez.dscommerce.dto.error.CustomAdviceError;
+import com.mpcortez.dscommerce.services.MessageService;
 import com.mpcortez.dscommerce.services.exception.DatabaseException;
 import com.mpcortez.dscommerce.services.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -19,8 +21,11 @@ import java.util.List;
 
 @Slf4j
 @ControllerAdvice
+@RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class ControllerExceptionHandler {
+
+    private final MessageService messageService;
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<CustomAdviceError> handleResourceNotFoundException(ResourceNotFoundException e, HttpServletRequest request) {
@@ -39,15 +44,13 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<CustomAdviceError> handleMethodArgumentNotValidException(HttpServletRequest request) {
-        var errMsg = "Você não possui acesso ao recurso solicitado.";
-        return responseEntityBuilder(getHttpStatusValue(HttpStatus.FORBIDDEN), errMsg, request.getRequestURI());
+        return responseEntityBuilder(getHttpStatusValue(HttpStatus.FORBIDDEN), messageService.getMessage("access.denied"), request.getRequestURI());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomAdviceError> handleException(Exception e, HttpServletRequest request) {
-        var errMsg = "Ocorreu um erro na ação solicitada! Por favor, contate o administrador.";
         log.error(e.getMessage(), e);
-        return responseEntityBuilder(getHttpStatusValue(HttpStatus.BAD_REQUEST), errMsg, request.getRequestURI());
+        return responseEntityBuilder(getHttpStatusValue(HttpStatus.BAD_REQUEST), messageService.getMessage("generic.error"), request.getRequestURI());
     }
 
     private Integer getHttpStatusValue(HttpStatus status) {

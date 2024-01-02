@@ -9,11 +9,9 @@ import com.mpcortez.dscommerce.repositories.OrderRepository;
 import com.mpcortez.dscommerce.services.*;
 import com.mpcortez.dscommerce.services.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +27,12 @@ public class OrderServiceImpl implements OrderService {
 
     private final ProductService productService;
 
-    private final MessageSource messageSource;
+    private final MessageService messageService;
 
     @Override
     public Order findById(Long id) {
-        var order = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(getMessage(String.valueOf(id))));
+        var order = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(messageService.getMessage("order.not.found", String.valueOf(id))));
         authService.validateSelfOrAdmin(order.getClient().getId());
         return order;
     }
@@ -54,9 +53,5 @@ public class OrderServiceImpl implements OrderService {
             var product = productService.getReferenceById(itemRequest.productId());
             order.getItems().add(OrderItemRequestDTOMapper.mapper(order, product, itemRequest.quantity()));
         });
-    }
-
-    private String getMessage(String... args) {
-        return messageSource.getMessage("order.not.found", args, Locale.getDefault());
     }
 }
