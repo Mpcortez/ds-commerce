@@ -15,7 +15,7 @@ public class UserController {
 
     private final UserService service;
 
-    @GetMapping(value = "logged")
+    @GetMapping(value = "me")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
     public UserResponseDTO logged() {
         return service.logged();
