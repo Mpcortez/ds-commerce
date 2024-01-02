@@ -61,7 +61,8 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toSet());
     }
 
-    protected User authenticated() {
+    @Override
+    public User authenticated() {
         String username = "";
 
         try {

@@ -29,6 +29,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Product getReferenceById(Long id) {
+        return repository.getReferenceById(id);
+    }
+
+    @Override
     public Page<Product> findAll(String name, Pageable pageable) {
         return repository.searchByName(name, pageable);
     }

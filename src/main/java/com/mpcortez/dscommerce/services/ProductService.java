@@ -12,6 +12,9 @@ public interface ProductService {
    Product findById(Long id);
 
    @Transactional(readOnly = true)
+   Product getReferenceById(Long id);
+
+   @Transactional(readOnly = true)
    Page<Product> findAll(String name, Pageable pageable);
 
    @Transactional()
